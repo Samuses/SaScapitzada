@@ -102,7 +102,7 @@ const { height = "300px" } = Astro.props;
     right: 0;
   }
 
-  /* Styles for children elements passed into the slot */
+  /* Apply styles to children elements passed into the slot */
   .carousel > :global(*) {
     height: var(--carousel-height);
     flex: 0 0 auto; /* Prevent items from shrinking */
@@ -144,20 +144,56 @@ const { height = "300px" } = Astro.props;
 
     if (!carousel || !prevBtn || !nextBtn) return;
 
-    // Calculate scroll distance based on the first item's width
-    const getScrollAmount = () => {
-      const firstItem = carousel.firstElementChild;
-      // Width + gap (16px approx 1rem)
-      return firstItem ? firstItem.clientWidth + 16 : 300;
+    // Helper: Find the item currently closest to the center of the carousel
+    const getCenteredItem = () => {
+      const carouselRect = carousel.getBoundingClientRect();
+      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+      let closestItem = null;
+      let minDiff = Infinity;
+
+      Array.from(carousel.children).forEach(item => {
+        const itemRect = item.getBoundingClientRect();
+        const itemCenter = itemRect.left + itemRect.width / 2;
+        const diff = Math.abs(itemCenter - carouselCenter);
+
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestItem = item;
+        }
+      });
+
+      return closestItem;
+    };
+
+    // Helper: Scroll to a specific item so it is centered
+    const scrollToItem = (item) => {
+      if (!item) return;
+
+      const carouselRect = carousel.getBoundingClientRect();
+      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+      const itemRect = item.getBoundingClientRect();
+      const itemCenter = itemRect.left + itemRect.width / 2;
+
+      const distance = itemCenter - carouselCenter;
+
+      carousel.scrollBy({ left: distance, behavior: 'smooth' });
     };
 
     // Button Event Listeners
     prevBtn.addEventListener('click', () => {
-      carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+      const current = getCenteredItem();
+      if (current && current.previousElementSibling) {
+        scrollToItem(current.previousElementSibling);
+      }
     });
 
     nextBtn.addEventListener('click', () => {
-      carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+      const current = getCenteredItem();
+      if (current && current.nextElementSibling) {
+        scrollToItem(current.nextElementSibling);
+      }
     });
 
     // Drag to Scroll Logic
@@ -168,29 +204,8 @@ const { height = "300px" } = Astro.props;
 
     // Snaps the carousel to the nearest centered item
     const snapToNearest = () => {
-      const carouselRect = carousel.getBoundingClientRect();
-      const carouselCenter = carouselRect.left + carouselRect.width / 2;
-
-      let minDiff = Infinity;
-
-      // Iterate through children to find the one closest to the center
-      Array.from(carousel.children).forEach(item => {
-        const itemRect = item.getBoundingClientRect();
-        const itemCenter = itemRect.left + itemRect.width / 2;
-        const diff = itemCenter - carouselCenter;
-
-        if (Math.abs(diff) < Math.abs(minDiff)) {
-          minDiff = diff;
-        }
-      });
-
-      // Scroll to center the closest item
-      if (minDiff !== Infinity) {
-        carousel.scrollBy({
-          left: minDiff,
-          behavior: 'smooth'
-        });
-      }
+      const current = getCenteredItem();
+      scrollToItem(current);
 
       // Re-enable CSS scroll snapping after the smooth scroll animation finishes
       clearTimeout(snapTimeout);
