@@ -226,6 +226,19 @@ const { height = "300px" } = Astro.props;
 			carousel.scrollBy({ left: distance, behavior: 'smooth' });
 		};
 
+		// --- Event Listener: Click on Carousel Items ---
+		// Add click event listener to the carousel container
+		carousel.addEventListener('click', (e) => {
+			// Check if the click was on a carousel item (or its children)
+			// We look for the closest direct child of the carousel
+			const clickedItem = e.target.closest('.carousel > *');
+
+			// If a valid item was clicked and we weren't dragging
+			if (clickedItem && !isDragging) {
+				scrollToItem(clickedItem);
+			}
+		});
+
 		// --- Event Listener: Previous Button ---
 		prevBtn.addEventListener('click', () => {
 			// Find the currently centered item
@@ -250,6 +263,7 @@ const { height = "300px" } = Astro.props;
 
 		// --- Drag-to-Scroll Logic Variables ---
 		let isDown = false; // Flag to track if mouse button is pressed
+		let isDragging = false; // Flag to distinguish between a click and a drag
 		let startX;         // Starting X position of the mouse
 		let scrollLeft;     // Initial scroll position of the carousel
 		let snapTimeout;    // Timer for re-enabling snap behavior
@@ -275,7 +289,8 @@ const { height = "300px" } = Astro.props;
 
 		// --- Event: Mouse Down (Start Drag) ---
 		carousel.addEventListener('mousedown', (e) => {
-			isDown = true; // Mark as dragging
+			isDown = true; // Mark as potentially dragging
+			isDragging = false; // Reset drag flag
 			clearTimeout(snapTimeout); // Cancel pending snap resets
 			carousel.classList.add('active'); // Add class to disable snap & change cursor
 			startX = e.pageX - carousel.offsetLeft; // Record initial mouse X position
@@ -294,7 +309,17 @@ const { height = "300px" } = Astro.props;
 		carousel.addEventListener('mouseup', () => {
 			if (!isDown) return; // If not dragging, ignore
 			isDown = false; // Stop dragging
-			snapToNearest(); // Snap to the nearest item
+
+			// Only snap if we actually dragged. If it was just a click, the click handler will take over.
+			if (isDragging) {
+				snapToNearest(); // Snap to the nearest item
+			} else {
+				// If it wasn't a drag, we still need to remove the active class
+				carousel.classList.remove('active');
+			}
+
+			// Reset dragging flag after a short delay to ensure click handler sees correct state
+			setTimeout(() => { isDragging = false; }, 0);
 		});
 
 		// --- Event: Mouse Move (Perform Drag) ---
@@ -306,6 +331,12 @@ const { height = "300px" } = Astro.props;
 			const x = e.pageX - carousel.offsetLeft;
 			// Calculate how far the mouse moved (1:1 ratio)
 			const walk = (x - startX) * 1;
+
+			// If moved more than a few pixels, consider it a drag
+			if (Math.abs(walk) > 5) {
+				isDragging = true;
+			}
+
 			// Update the scroll position immediately (no smooth scroll here for responsiveness)
 			carousel.scrollLeft = scrollLeft - walk;
 		});
