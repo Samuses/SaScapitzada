@@ -1,8 +1,8 @@
 ---
 // Define the properties that this component accepts
 interface Props {
-  // Optional height property for the carousel (default: "300px")
-  height?: string;
+	// Optional height property for the carousel (default: "300px")
+	height?: string;
 }
 
 // Destructure props with a default value for height
@@ -11,303 +11,303 @@ const { height = "300px" } = Astro.props;
 
 <!-- Main wrapper for the carousel, sets the CSS variable for height -->
 <div class="carousel-wrapper" style={`--carousel-height: ${height};`}>
-  <!-- Previous Slide Button -->
-  <button class="nav-btn prev" aria-label="Previous slide">
-    <!-- SVG Icon for Left Arrow -->
-    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="15 18 9 12 15 6"></polyline>
-    </svg>
-  </button>
+	<!-- Previous Slide Button -->
+	<button class="nav-btn prev" aria-label="Previous slide">
+		<!-- SVG Icon for Left Arrow -->
+		<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<polyline points="15 18 9 12 15 6"></polyline>
+		</svg>
+	</button>
 
-  <!-- Container that hides the overflow of the scrollable area -->
-  <div class="carousel-container">
-    <!-- The scrollable element containing the slides -->
-    <div class="carousel">
-      <!-- Slot for injecting external content (images, divs, etc.) -->
-      <slot />
-    </div>
-  </div>
+	<!-- Container that hides the overflow of the scrollable area -->
+	<div class="carousel-container">
+		<!-- The scrollable element containing the slides -->
+		<div class="carousel">
+			<!-- Slot for injecting external content (images, divs, etc.) -->
+			<slot />
+		</div>
+	</div>
 
-  <!-- Next Slide Button -->
-  <button class="nav-btn next" aria-label="Next slide">
-    <!-- SVG Icon for Right Arrow -->
-    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </button>
+	<!-- Next Slide Button -->
+	<button class="nav-btn next" aria-label="Next slide">
+		<!-- SVG Icon for Right Arrow -->
+		<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<polyline points="9 18 15 12 9 6"></polyline>
+		</svg>
+	</button>
 </div>
 
 <style>
-  /* Wrapper: positions the navigation buttons relative to the images */
-  .carousel-wrapper {
-    position: relative; /* Establishes a positioning context */
-    display: flex; /* Aligns children */
-    align-items: center; /* Vertically centers content */
-    width: 100%; /* Takes full available width */
-    overflow: hidden; /* Prevents content from spilling out */
-  }
+	/* Wrapper: positions the navigation buttons relative to the images */
+	.carousel-wrapper {
+		position: relative; /* Establishes a positioning context */
+		display: flex; /* Aligns children */
+		align-items: center; /* Vertically centers content */
+		width: 100%; /* Takes full available width */
+		overflow: hidden; /* Prevents content from spilling out */
+	}
 
-  /* Container: constrains the width of the scrollable area */
-  .carousel-container {
-    width: 100%; /* Full width */
-    overflow: hidden; /* Hides scrollbars visually in some browsers */
-  }
+	/* Container: constrains the width of the scrollable area */
+	.carousel-container {
+		width: 100%; /* Full width */
+		overflow: hidden; /* Hides scrollbars visually in some browsers */
+	}
 
-  /* Carousel: The actual scrollable list of items */
-  .carousel {
-    display: flex; /* Arranges items in a row */
-    overflow-x: auto; /* Enables horizontal scrolling */
-    scroll-snap-type: x mandatory; /* Forces items to snap to specific points */
-    gap: 1rem; /* Space between items */
+	/* Carousel: The actual scrollable list of items */
+	.carousel {
+		display: flex; /* Arranges items in a row */
+		overflow-x: auto; /* Enables horizontal scrolling */
+		scroll-snap-type: x mandatory; /* Forces items to snap to specific points */
+		gap: 1rem; /* Space between items */
 
-    /* Padding strategy: */
-    /* 1rem top, 30vw right, 2rem bottom, 30vw left */
-    /* Large horizontal padding ensures the first/last items can be centered */
-    /* Extra bottom padding prevents box-shadows from being clipped */
-    padding: 1rem 30vw 2rem 30vw;
+		/* Padding strategy: */
+		/* 1rem top, 30vw right, 2rem bottom, 30vw left */
+		/* Large horizontal padding ensures the first/last items can be centered */
+		/* Extra bottom padding prevents box-shadows from being clipped */
+		padding: 1rem 30vw 2rem 30vw;
 
-    -webkit-overflow-scrolling: touch; /* Enables momentum scrolling on iOS */
-    scrollbar-width: none; /* Hides the scrollbar in Firefox */
-    scroll-behavior: smooth; /* smooth scrolling for programmatic scrolls */
-    cursor: grab; /* Shows a 'grab' hand cursor to indicate draggability */
-    user-select: none; /* Prevents text/image selection while dragging */
-    -webkit-user-select: none; /* Safari prefix for user-select */
-  }
+		-webkit-overflow-scrolling: touch; /* Enables momentum scrolling on iOS */
+		scrollbar-width: none; /* Hides the scrollbar in Firefox */
+		scroll-behavior: smooth; /* smooth scrolling for programmatic scrolls */
+		cursor: grab; /* Shows a 'grab' hand cursor to indicate draggability */
+		user-select: none; /* Prevents text/image selection while dragging */
+		-webkit-user-select: none; /* Safari prefix for user-select */
+	}
 
-  /* Active class: Applied via JS when the user is dragging */
-  .carousel.active {
-    cursor: grabbing; /* Changes cursor to 'grabbing' (closed hand) */
-    scroll-snap-type: none; /* Disables snapping so drag is fluid */
-    scroll-behavior: auto; /* Disables smooth scroll for instant drag response */
-  }
+	/* Active class: Applied via JS when the user is dragging */
+	.carousel.active {
+		cursor: grabbing; /* Changes cursor to 'grabbing' (closed hand) */
+		scroll-snap-type: none; /* Disables snapping so drag is fluid */
+		scroll-behavior: auto; /* Disables smooth scroll for instant drag response */
+	}
 
-  /* Hides scrollbar for WebKit browsers (Chrome, Safari, Edge) */
-  .carousel::-webkit-scrollbar {
-    display: none;
-  }
+	/* Hides scrollbar for WebKit browsers (Chrome, Safari, Edge) */
+	.carousel::-webkit-scrollbar {
+		display: none;
+	}
 
-  /* Navigation Buttons: Shared styles for Prev and Next */
-  .nav-btn {
-    background: rgba(15, 15, 15, 0.103); /* Semi-transparent white background */
-    border: none; /* Removes default border */
-    height: 100%; /* Spans the full height of the carousel */
-    width: 80px; /* Wide click area for better usability */
-    display: flex; /* Centers the icon */
-    align-items: center; /* Vertical center */
-    justify-content: center; /* Horizontal center */
-    cursor: pointer; /* Pointer cursor on hover */
-    position: absolute; /* Absolute positioning over the carousel */
-    z-index: 20; /* Ensures buttons are above the images */
-    top: 0; /* Aligns to top */
-    transition: all 0.2s ease; /* Smooth transition for hover effects */
-    backdrop-filter: blur(2px); /* Blurs the content behind the button */
-    color: #ffffff; /* Icon color (black) */
-  }
+	/* Navigation Buttons: Shared styles for Prev and Next */
+	.nav-btn {
+		background: rgba(15, 15, 15, 0.103); /* Semi-transparent white background */
+		border: none; /* Removes default border */
+		height: 100%; /* Spans the full height of the carousel */
+		width: 80px; /* Wide click area for better usability */
+		display: flex; /* Centers the icon */
+		align-items: center; /* Vertical center */
+		justify-content: center; /* Horizontal center */
+		cursor: pointer; /* Pointer cursor on hover */
+		position: absolute; /* Absolute positioning over the carousel */
+		z-index: 20; /* Ensures buttons are above the images */
+		top: 0; /* Aligns to top */
+		transition: all 0.2s ease; /* Smooth transition for hover effects */
+		backdrop-filter: blur(2px); /* Blurs the content behind the button */
+		color: #ffffff; /* Icon color (black) */
+	}
 
-  /* Hover state for navigation buttons */
-  .nav-btn:hover {
-    background: rgba(0, 0, 0, 0.432); /* Becomes more opaque on hover */
-    color: #ffffff; /* Ensures icon remains black */
-  }
+	/* Hover state for navigation buttons */
+	.nav-btn:hover {
+		background: rgba(0, 0, 0, 0.432); /* Becomes more opaque on hover */
+		color: #ffffff; /* Ensures icon remains black */
+	}
 
-  /* Position the Previous button to the left */
-  .prev {
-    left: 0;
-  }
+	/* Position the Previous button to the left */
+	.prev {
+		left: 0;
+	}
 
-  /* Position the Next button to the right */
-  .next {
-    right: 0;
-  }
+	/* Position the Next button to the right */
+	.next {
+		right: 0;
+	}
 
-  /* Styles for the items injected into the <slot /> */
-  /* :global(*) targets any element passed from the parent component */
-  .carousel > :global(*) {
-    height: var(--carousel-height); /* Enforces the height prop */
-    flex: 0 0 auto; /* Prevents items from shrinking or growing */
-    scroll-snap-align: center; /* Tells the browser to snap this item to center */
-    border-radius: 0.5rem; /* Rounded corners */
-    overflow: hidden; /* Clips content to rounded corners */
-    position: relative; /* Context for absolute positioning of ::after */
-    /* subtle shadow for depth */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s ease; /* Smooth transform transitions */
-  }
+	/* Styles for the items injected into the <slot /> */
+	/* :global(*) targets any element passed from the parent component */
+	.carousel > :global(*) {
+		height: var(--carousel-height); /* Enforces the height prop */
+		flex: 0 0 auto; /* Prevents items from shrinking or growing */
+		scroll-snap-align: center; /* Tells the browser to snap this item to center */
+		border-radius: 0.5rem; /* Rounded corners */
+		overflow: hidden; /* Clips content to rounded corners */
+		position: relative; /* Context for absolute positioning of ::after */
+		/* subtle shadow for depth */
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		transition: transform 0.3s ease; /* Smooth transform transitions */
+	}
 
-  /* Pseudo-element for an inner border overlay */
-  /* This creates a border *inside* the image without affecting layout */
-  .carousel > :global(*)::after {
-    content: ""; /* Required for pseudo-elements */
-    position: absolute; /* Overlays the parent */
-    inset: 0; /* Stretches to all 4 edges */
-    border-radius: 0.5rem; /* Matches parent radius */
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Light semi-transparent border */
-    pointer-events: none; /* Allows clicks to pass through to the image */
-    z-index: 10; /* sits on top of the image */
-  }
+	/* Pseudo-element for an inner border overlay */
+	/* This creates a border *inside* the image without affecting layout */
+	.carousel > :global(*)::after {
+		content: ""; /* Required for pseudo-elements */
+		position: absolute; /* Overlays the parent */
+		inset: 0; /* Stretches to all 4 edges */
+		border-radius: 0.5rem; /* Matches parent radius */
+		border: 1px solid rgba(0, 0, 0, 0.1); /* Light semi-transparent border */
+		pointer-events: none; /* Allows clicks to pass through to the image */
+		z-index: 10; /* sits on top of the image */
+	}
 
-  /* Styles for images inside the carousel items */
-  .carousel > :global(*) > :global(img) {
-    height: 100%; /* Fills the container height */
-    width: auto; /* Adjusts width to maintain aspect ratio */
-    object-fit: cover; /* Ensures image covers area without distortion */
-    display: block; /* Removes default inline spacing (ghost space) */
-    pointer-events: none; /* Prevents browser's native image drag behavior */
-  }
+	/* Styles for images inside the carousel items */
+	.carousel > :global(*) > :global(img) {
+		height: 100%; /* Fills the container height */
+		width: auto; /* Adjusts width to maintain aspect ratio */
+		object-fit: cover; /* Ensures image covers area without distortion */
+		display: block; /* Removes default inline spacing (ghost space) */
+		pointer-events: none; /* Prevents browser's native image drag behavior */
+	}
 </style>
 
 <script>
-  // Select all carousel instances on the page and initialize them
-  document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
-    // Query the necessary elements within this specific wrapper
-    const carousel = wrapper.querySelector('.carousel');
-    const prevBtn = wrapper.querySelector('.prev');
-    const nextBtn = wrapper.querySelector('.next');
+	// Select all carousel instances on the page and initialize them
+	document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
+		// Query the necessary elements within this specific wrapper
+		const carousel = wrapper.querySelector('.carousel');
+		const prevBtn = wrapper.querySelector('.prev');
+		const nextBtn = wrapper.querySelector('.next');
 
-    // Safety check: if elements are missing, stop execution
-    if (!carousel || !prevBtn || !nextBtn) return;
+		// Safety check: if elements are missing, stop execution
+		if (!carousel || !prevBtn || !nextBtn) return;
 
-    /**
-     * Helper Function: getCenteredItem
-     * Calculates which item is currently closest to the visual center of the carousel.
-     * This is crucial for handling items of different widths.
-     */
-    const getCenteredItem = () => {
-      // Get the bounding rectangle of the carousel container
-      const carouselRect = carousel.getBoundingClientRect();
-      // Calculate the center X coordinate of the carousel
-      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+		/**
+		 * Helper Function: getCenteredItem
+		 * Calculates which item is currently closest to the visual center of the carousel.
+		 * This is crucial for handling items of different widths.
+		 */
+		const getCenteredItem = () => {
+			// Get the bounding rectangle of the carousel container
+			const carouselRect = carousel.getBoundingClientRect();
+			// Calculate the center X coordinate of the carousel
+			const carouselCenter = carouselRect.left + carouselRect.width / 2;
 
-      let closestItem = null;
-      // Initialize minimum difference with a very large number
-      let minDiff = Infinity;
+			let closestItem = null;
+			// Initialize minimum difference with a very large number
+			let minDiff = Infinity;
 
-      // Iterate over all child elements (slides)
-      Array.from(carousel.children).forEach(item => {
-        // Get the bounding rectangle of the current item
-        const itemRect = item.getBoundingClientRect();
-        // Calculate the center X coordinate of the item
-        const itemCenter = itemRect.left + itemRect.width / 2;
-        // Calculate distance between item center and carousel center
-        const diff = Math.abs(itemCenter - carouselCenter);
+			// Iterate over all child elements (slides)
+			Array.from(carousel.children).forEach(item => {
+				// Get the bounding rectangle of the current item
+				const itemRect = item.getBoundingClientRect();
+				// Calculate the center X coordinate of the item
+				const itemCenter = itemRect.left + itemRect.width / 2;
+				// Calculate distance between item center and carousel center
+				const diff = Math.abs(itemCenter - carouselCenter);
 
-        // If this item is closer than the previous best, update it
-        if (diff < minDiff) {
-          minDiff = diff;
-          closestItem = item;
-        }
-      });
+				// If this item is closer than the previous best, update it
+				if (diff < minDiff) {
+					minDiff = diff;
+					closestItem = item;
+				}
+			});
 
-      // Return the DOM element that is most central
-      return closestItem;
-    };
+			// Return the DOM element that is most central
+			return closestItem;
+		};
 
-    /**
-     * Helper Function: scrollToItem
-     * Smoothly scrolls the carousel so that the target item is centered.
-     * @param {Element} item - The DOM element to scroll to.
-     */
-    const scrollToItem = (item) => {
-      // If no item is provided, do nothing
-      if (!item) return;
+		/**
+		 * Helper Function: scrollToItem
+		 * Smoothly scrolls the carousel so that the target item is centered.
+		 * @param {Element} item - The DOM element to scroll to.
+		 */
+		const scrollToItem = (item) => {
+			// If no item is provided, do nothing
+			if (!item) return;
 
-      // Recalculate carousel dimensions
-      const carouselRect = carousel.getBoundingClientRect();
-      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+			// Recalculate carousel dimensions
+			const carouselRect = carousel.getBoundingClientRect();
+			const carouselCenter = carouselRect.left + carouselRect.width / 2;
 
-      // Calculate item dimensions
-      const itemRect = item.getBoundingClientRect();
-      const itemCenter = itemRect.left + itemRect.width / 2;
+			// Calculate item dimensions
+			const itemRect = item.getBoundingClientRect();
+			const itemCenter = itemRect.left + itemRect.width / 2;
 
-      // Determine how far we need to scroll (positive or negative)
-      const distance = itemCenter - carouselCenter;
+			// Determine how far we need to scroll (positive or negative)
+			const distance = itemCenter - carouselCenter;
 
-      // Execute the scroll with smooth behavior
-      carousel.scrollBy({ left: distance, behavior: 'smooth' });
-    };
+			// Execute the scroll with smooth behavior
+			carousel.scrollBy({ left: distance, behavior: 'smooth' });
+		};
 
-    // --- Event Listener: Previous Button ---
-    prevBtn.addEventListener('click', () => {
-      // Find the currently centered item
-      const current = getCenteredItem();
-      // If it exists and has a previous sibling...
-      if (current && current.previousElementSibling) {
-        // Scroll to that previous sibling
-        scrollToItem(current.previousElementSibling);
-      }
-    });
+		// --- Event Listener: Previous Button ---
+		prevBtn.addEventListener('click', () => {
+			// Find the currently centered item
+			const current = getCenteredItem();
+			// If it exists and has a previous sibling...
+			if (current && current.previousElementSibling) {
+				// Scroll to that previous sibling
+				scrollToItem(current.previousElementSibling);
+			}
+		});
 
-    // --- Event Listener: Next Button ---
-    nextBtn.addEventListener('click', () => {
-      // Find the currently centered item
-      const current = getCenteredItem();
-      // If it exists and has a next sibling...
-      if (current && current.nextElementSibling) {
-        // Scroll to that next sibling
-        scrollToItem(current.nextElementSibling);
-      }
-    });
+		// --- Event Listener: Next Button ---
+		nextBtn.addEventListener('click', () => {
+			// Find the currently centered item
+			const current = getCenteredItem();
+			// If it exists and has a next sibling...
+			if (current && current.nextElementSibling) {
+				// Scroll to that next sibling
+				scrollToItem(current.nextElementSibling);
+			}
+		});
 
-    // --- Drag-to-Scroll Logic Variables ---
-    let isDown = false; // Flag to track if mouse button is pressed
-    let startX;         // Starting X position of the mouse
-    let scrollLeft;     // Initial scroll position of the carousel
-    let snapTimeout;    // Timer for re-enabling snap behavior
+		// --- Drag-to-Scroll Logic Variables ---
+		let isDown = false; // Flag to track if mouse button is pressed
+		let startX;         // Starting X position of the mouse
+		let scrollLeft;     // Initial scroll position of the carousel
+		let snapTimeout;    // Timer for re-enabling snap behavior
 
-    /**
-     * Function: snapToNearest
-     * Called when dragging ends. Finds the nearest item and snaps to it.
-     */
-    const snapToNearest = () => {
-      // Find the item closest to center after the drag
-      const current = getCenteredItem();
-      // Smoothly scroll to center it perfectly
-      scrollToItem(current);
+		/**
+		 * Function: snapToNearest
+		 * Called when dragging ends. Finds the nearest item and snaps to it.
+		 */
+		const snapToNearest = () => {
+			// Find the item closest to center after the drag
+			const current = getCenteredItem();
+			// Smoothly scroll to center it perfectly
+			scrollToItem(current);
 
-      // Clear any existing timeout to prevent conflicts
-      clearTimeout(snapTimeout);
-      // Set a timeout to remove the 'active' class after animation (approx 600ms)
-      snapTimeout = setTimeout(() => {
-        // Removing 'active' re-enables CSS scroll-snap
-        carousel.classList.remove('active');
-      }, 600);
-    };
+			// Clear any existing timeout to prevent conflicts
+			clearTimeout(snapTimeout);
+			// Set a timeout to remove the 'active' class after animation (approx 600ms)
+			snapTimeout = setTimeout(() => {
+				// Removing 'active' re-enables CSS scroll-snap
+				carousel.classList.remove('active');
+			}, 600);
+		};
 
-    // --- Event: Mouse Down (Start Drag) ---
-    carousel.addEventListener('mousedown', (e) => {
-      isDown = true; // Mark as dragging
-      clearTimeout(snapTimeout); // Cancel pending snap resets
-      carousel.classList.add('active'); // Add class to disable snap & change cursor
-      startX = e.pageX - carousel.offsetLeft; // Record initial mouse X position
-      scrollLeft = carousel.scrollLeft; // Record initial scroll position
-      e.preventDefault(); // Prevent default browser behavior (like text selection)
-    });
+		// --- Event: Mouse Down (Start Drag) ---
+		carousel.addEventListener('mousedown', (e) => {
+			isDown = true; // Mark as dragging
+			clearTimeout(snapTimeout); // Cancel pending snap resets
+			carousel.classList.add('active'); // Add class to disable snap & change cursor
+			startX = e.pageX - carousel.offsetLeft; // Record initial mouse X position
+			scrollLeft = carousel.scrollLeft; // Record initial scroll position
+			e.preventDefault(); // Prevent default browser behavior (like text selection)
+		});
 
-    // --- Event: Mouse Leave (Stop Drag if cursor leaves area) ---
-    carousel.addEventListener('mouseleave', () => {
-      if (!isDown) return; // If not dragging, ignore
-      isDown = false; // Stop dragging
-      snapToNearest(); // Snap to the nearest item
-    });
+		// --- Event: Mouse Leave (Stop Drag if cursor leaves area) ---
+		carousel.addEventListener('mouseleave', () => {
+			if (!isDown) return; // If not dragging, ignore
+			isDown = false; // Stop dragging
+			snapToNearest(); // Snap to the nearest item
+		});
 
-    // --- Event: Mouse Up (Stop Drag on release) ---
-    carousel.addEventListener('mouseup', () => {
-      if (!isDown) return; // If not dragging, ignore
-      isDown = false; // Stop dragging
-      snapToNearest(); // Snap to the nearest item
-    });
+		// --- Event: Mouse Up (Stop Drag on release) ---
+		carousel.addEventListener('mouseup', () => {
+			if (!isDown) return; // If not dragging, ignore
+			isDown = false; // Stop dragging
+			snapToNearest(); // Snap to the nearest item
+		});
 
-    // --- Event: Mouse Move (Perform Drag) ---
-    carousel.addEventListener('mousemove', (e) => {
-      if (!isDown) return; // If not dragging, ignore
-      e.preventDefault(); // Prevent default behavior
+		// --- Event: Mouse Move (Perform Drag) ---
+		carousel.addEventListener('mousemove', (e) => {
+			if (!isDown) return; // If not dragging, ignore
+			e.preventDefault(); // Prevent default behavior
 
-      // Calculate current mouse X position
-      const x = e.pageX - carousel.offsetLeft;
-      // Calculate how far the mouse moved (1:1 ratio)
-      const walk = (x - startX) * 1;
-      // Update the scroll position immediately (no smooth scroll here for responsiveness)
-      carousel.scrollLeft = scrollLeft - walk;
-    });
-  });
+			// Calculate current mouse X position
+			const x = e.pageX - carousel.offsetLeft;
+			// Calculate how far the mouse moved (1:1 ratio)
+			const walk = (x - startX) * 1;
+			// Update the scroll position immediately (no smooth scroll here for responsiveness)
+			carousel.scrollLeft = scrollLeft - walk;
+		});
+	});
 </script>
