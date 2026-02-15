@@ -1,0 +1,110 @@
+---
+interface Props {
+  patternColor?: string; /* Colore principale del disegno (es. #a83f39 per il rosso, #2c2c2c per il nero) */
+  bgColor?: string;      /* Colore di sfondo della fascia (es. #f4f1ea per ecru, transparent per fonderlo) */
+  height?: string;       /* Altezza totale della fascia */
+  mode?: 'light' | 'dark'; /* 'light' per sfondi chiari, 'dark' per sfondi scuri */
+  class?: string;
+}
+
+const {
+  patternColor = "#a83f39",
+  bgColor = "transparent",
+  height = "32px",
+  mode = "dark",
+  class: className
+} = Astro.props;
+
+/* Definiamo i colori di blending in base alla modalità */
+const blendMode = mode === 'dark' ? 'screen' : 'multiply';
+const opacity = mode === 'dark' ? '0.9' : '0.8';
+---
+
+<svg style="display: none;">
+  <defs>
+    <filter id="fabric-texture">
+      <feTurbulence type="fractalNoise" baseFrequency="0.00" numOctaves="2" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+</svg>
+
+<div
+  class:list={["sardinian-weave", className]}
+  role="separator"
+  aria-hidden="true"
+  data-mode={mode}
+  style={`
+    --p-color: ${patternColor};
+    --bg-color: ${bgColor};
+    --h: ${height};
+    --blend: ${blendMode};
+    --op: ${opacity};
+  `}
+>
+  <div class="border-line top"></div>
+
+  <div class="pattern-container">
+    <div class="pattern"></div>
+  </div>
+
+  <div class="border-line bottom"></div>
+</div>
+
+<style>
+  .sardinian-weave {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: var(--h);
+    background-color: var(--bg-color);
+    position: relative;
+    overflow: hidden; /* Contiene l'effetto del filtro */
+  }
+
+  /* Stile delle linee di bordo */
+  .border-line {
+    width: 100%;
+    height: 2px; /* Leggermente più spesse per la texture */
+    background-color: var(--p-color);
+    opacity: var(--op);
+    margin: 3px 0;
+    /* Applica il filtro per sgranare i bordi */
+    filter: url(#fabric-texture);
+    /* Fonde il colore con lo sfondo */
+    mix-blend-mode: var(--blend);
+  }
+
+  .pattern-container {
+    flex-grow: 1;
+    width: 100%;
+    position: relative;
+    /* Applica il filtro e il blending al contenitore del pattern */
+    filter: url(#fabric-texture);
+    mix-blend-mode: var(--blend);
+    opacity: var(--op);
+  }
+
+  .pattern {
+    width: 100%;
+    height: 100%;
+    /* Pattern a ROMBI (Pistoccu) migliorato.
+       Usa gradienti radiali per un effetto meno spigoloso e più simile al "pibiones".
+    */
+    background-image:
+      radial-gradient(circle at center, var(--p-color) 40%, transparent 42%), /* Rombo centrale */
+      radial-gradient(circle at center, var(--p-color) 20%, transparent 22%); /* Puntino di raccordo */
+
+    background-position: 0 0, 12px 12px; /* Posizioni sfalsate per creare la griglia */
+    background-size: 24px 24px; /* Dimensione del modulo che si ripete */
+    background-repeat: repeat-x;
+  }
+
+  /* Aggiustamenti specifici per la modalità 'dark' per far risaltare il disegno */
+  .sardinian-weave[data-mode="dark"] .border-line,
+  .sardinian-weave[data-mode="dark"] .pattern-container {
+    /* Aumenta leggermente la luminosità su sfondo scuro */
+    filter: url(#fabric-texture) brightness(1.2);
+  }
+</style>
