@@ -3,7 +3,6 @@ import Layout from "../layouts/Layout.astro";
 import Link from "../../components/Elements/Atomic/Link.astro"; // componente importato da....
 import Shr from "../../components/Elements/Atomic/Separator.astro";
 import About from "../../components/PageSpecific/About.astro";
-import MainPhoto from "../../components/PageSpecific/MainPhoto.astro";
 import Carousel from "../../components/PageSpecific/MainCarousel.astro";
 import Projects from "../../components/PageSpecific/Projects.astro";
 import FutureProject from "../../components/PageSpecific/FutureProject.astro";
@@ -14,6 +13,7 @@ import OurMusic from "../../components/PageSpecific/OurMusic.astro";
 	<About/>
 	<Shr topSpace="20px" bottomSpace="20px"/>
 	<Carousel height="300px">
+		<img src="/src/assets/images/fotoGruppo.jpeg" alt="main">
 		<img src="/src/assets/images/fotoDavantiMadonnina.jpeg" alt="foto Davanti Madonnina">
 	    <img src="/src/assets/images/fotoDelGruppoInPiazza.jpeg" alt="foto del gruppo in piazza">
 	    <img src="/src/assets/images/fotoDelGruppoInPiazza2.jpeg" alt="altra foto Del Gruppo In Piazza ">
