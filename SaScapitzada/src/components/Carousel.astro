@@ -1,42 +1,43 @@
 ---
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
-
 interface Props {
-  path: string; // Percorso relativo a src/assets, es. "images/evento"
+  height?: string;
 }
 
-const { path } = Astro.props;
-
-// Carica tutte le immagini dalla cartella assets
-// Nota: import.meta.glob richiede stringhe letterali per il pattern, quindi carichiamo tutto e filtriamo
-const allImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.{jpeg,jpg,png,gif,webp}', { eager: true });
-
-// Filtra le immagini che corrispondono al percorso specificato
-const images = Object.entries(allImages)
-  .filter(([key]) => key.includes(path))
-  .map(([_, mod]) => mod.default);
+const { height = "300px" } = Astro.props;
 ---
 
-<div class="carousel-container">
-  <div class="carousel">
-    {images.length > 0 ? (
-      images.map((image, index) => (
-        <div class="carousel-item">
-          <Image src={image} alt={`Slide ${index + 1}`} class="carousel-image" />
-        </div>
-      ))
-    ) : (
-      <p class="no-images">Nessuna immagine trovata in: {path}</p>
-    )}
+<div class="carousel-wrapper" style={`--carousel-height: ${height};`}>
+  <button class="nav-btn prev" aria-label="Previous slide">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+
+  <div class="carousel-container">
+    <div class="carousel">
+      <slot />
+    </div>
   </div>
+
+  <button class="nav-btn next" aria-label="Next slide">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
 </div>
 
 <style>
+  .carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+
   .carousel-container {
     width: 100%;
     overflow: hidden;
-    padding: 1rem 0;
   }
 
   .carousel {
@@ -44,40 +45,98 @@ const images = Object.entries(allImages)
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     gap: 1rem;
-    padding: 0 1rem;
-    -webkit-overflow-scrolling: touch; /* Per scorrimento fluido su mobile */
-    scrollbar-width: none; /* Nasconde scrollbar su Firefox */
+    /* Aumentato padding-bottom per evitare il taglio dell'ombra */
+    padding: 1rem 30vw 2rem 30vw;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
   }
 
   .carousel::-webkit-scrollbar {
-    display: none; /* Nasconde scrollbar su Chrome/Safari */
+    display: none;
   }
 
-  .carousel-item {
-    flex: 0 0 85%; /* Mostra parzialmente la slide successiva */
+  .nav-btn {
+    background: rgba(255, 255, 255, 0.3); /* Sfondo più trasparente */
+    border: none;
+    /* Altezza 100% e larghezza maggiore */
+    height: 100%;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(2px);
+    color: #333;
+  }
+
+  .nav-btn:hover {
+    background: rgba(255, 255, 255, 0.6);
+    color: #000;
+  }
+
+  .prev {
+    left: 0;
+  }
+
+  .next {
+    right: 0;
+  }
+
+  /* Applica lo stile agli elementi passati nello slot */
+  .carousel > :global(*) {
+    height: var(--carousel-height);
+    flex: 0 0 auto;
     scroll-snap-align: center;
     border-radius: 0.5rem;
     overflow: hidden;
+    position: relative; /* Aggiunto per ancorare il bordo ::after */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease;
   }
 
-  @media (min-width: 768px) {
-    .carousel-item {
-      flex: 0 0 45%; /* Su desktop mostra più slide */
-    }
+  /* NUOVO: Disegna il bordo sopra l'immagine */
+  .carousel > :global(*)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    z-index: 10;
   }
 
-  .carousel-image {
-    width: 100%;
+  .carousel > :global(*) > :global(img) {
     height: 100%;
+    width: auto;
     object-fit: cover;
-    display: block;
-  }
-
-  .no-images {
-    text-align: center;
-    width: 100%;
-    color: #666;
-    padding: 2rem;
+    display: block; /* Aggiunto per rimuovere spazi fantasma sotto le immagini */
   }
 </style>
+
+<script>
+  document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
+    const carousel = wrapper.querySelector('.carousel');
+    const prevBtn = wrapper.querySelector('.prev');
+    const nextBtn = wrapper.querySelector('.next');
+
+    if (!carousel || !prevBtn || !nextBtn) return;
+
+    const getScrollAmount = () => {
+      const firstItem = carousel.firstElementChild;
+      return firstItem ? firstItem.clientWidth + 16 : 300;
+    };
+
+    prevBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+    });
+
+    nextBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+    });
+  });
+</script>

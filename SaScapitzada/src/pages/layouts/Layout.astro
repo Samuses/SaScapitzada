@@ -20,23 +20,74 @@ const {title, language} = Astro.props; // dichiariamo i parametri che prenderà 
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 	</head>
 	
 	<body>
-		<Header></Header>
-		
-		<slot />
+		<div class="app-container">
+			<Header></Header>
 
-		<Footer></Footer>
+			<main>
+				<slot />
+			</main>
 
+			<Footer></Footer>
+		</div>
 	</body>
 </html>
 
-<style>
-	html,
+<style is:global>
+	:root {
+		--bg-color: #121212;
+		--text-color: #e0e0e0;
+		--accent-color: #ece103;
+		--secondary-bg: #1e1e1e;
+	}
+
+	html {
+		font-family: 'Inter', sans-serif;
+		background-color: var(--bg-color);
+		color: var(--text-color);
+	}
+
 	body {
 		margin: 0;
 		width: 100%;
-		height: 100%;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.app-container {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		max-width: 1200px;
+		margin: 0 auto;
+		width: 100%;
+		padding: 0 1rem;
+		box-sizing: border-box;
+	}
+
+	main {
+		flex: 1;
+		padding: 2rem 0;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		color: #ffffff;
+		margin-top: 0;
+	}
+
+	a {
+		color: var(--accent-color);
+		text-decoration: none;
+		transition: opacity 0.2s;
+	}
+
+	a:hover {
+		opacity: 0.8;
 	}
 </style>
