@@ -1,0 +1,16 @@
+---
+import { Image } from "astro:assets";
+import immagineGruppo from "../assets/images/fotoGruppo.jpeg"
+---
+
+<div class="mainPhoto">
+    <Image src= {immagineGruppo} alt = "Foto del gruppo Sa Scapitzada" />
+</div>
+
+<style>
+    .mainPhoto img {
+        width: 100%;
+        max-width: 500px; /* AGGIUSTA QUESTO NUMERO PER LA GRANDEZZA */
+        height: auto;
+    }
+</style>
