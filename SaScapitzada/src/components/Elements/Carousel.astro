@@ -35,6 +35,12 @@ const { height = "300px" } = Astro.props;
 			<polyline points="9 18 15 12 9 6"></polyline>
 		</svg>
 	</button>
+
+	<!-- Lightbox Container (Hidden by default) -->
+	<div class="lightbox">
+		<span class="close">&times;</span>
+		<img class="lightbox-content" alt="Enlarged view" />
+	</div>
 </div>
 
 <style>
@@ -122,7 +128,8 @@ const { height = "300px" } = Astro.props;
 
 	/* Styles for the items injected into the <slot /> */
 	/* :global(*) targets any element passed from the parent component */
-	.carousel > :global(*) {
+	/* Exclude script, style, and template tags which might be injected by Astro */
+	.carousel > :global(*:not(script):not(style):not(template)) {
 		height: var(--carousel-height); /* Enforces the height prop */
 		flex: 0 0 auto; /* Prevents items from shrinking or growing */
 		scroll-snap-align: center; /* Tells the browser to snap this item to center */
@@ -134,9 +141,17 @@ const { height = "300px" } = Astro.props;
 		transition: transform 0.3s ease; /* Smooth transform transitions */
 	}
 
+	/* Support for direct images (like Astro <Image />) */
+	/* Ensures they scale correctly and don't interfere with dragging */
+	.carousel > :global(img) {
+		width: auto;
+		object-fit: cover;
+		pointer-events: none;
+	}
+
 	/* Pseudo-element for an inner border overlay */
 	/* This creates a border *inside* the image without affecting layout */
-	.carousel > :global(*)::after {
+	.carousel > :global(*:not(script):not(style):not(template))::after {
 		content: ""; /* Required for pseudo-elements */
 		position: absolute; /* Overlays the parent */
 		inset: 0; /* Stretches to all 4 edges */
@@ -154,6 +169,64 @@ const { height = "300px" } = Astro.props;
 		display: block; /* Removes default inline spacing (ghost space) */
 		pointer-events: none; /* Prevents browser's native image drag behavior */
 	}
+
+	/* --- Lightbox Styles --- */
+	.lightbox {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 1000; /* Sit on top */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+		justify-content: center;
+		align-items: center;
+		backdrop-filter: blur(5px);
+	}
+
+	/* Class to show the lightbox */
+	.lightbox.active {
+		display: flex;
+	}
+
+	/* The Image inside the Lightbox */
+	.lightbox-content {
+		margin: auto;
+		display: block;
+		max-width: 80%; /* Reduced from 90% to 80% */
+		max-height: 80%; /* Reduced from 90% to 80% */
+		border-radius: 5px;
+		box-shadow: 0 0 20px rgba(0,0,0,0.5);
+		animation: zoom 0.3s; /* Simple zoom animation */
+	}
+
+	/* Close Button */
+	.close {
+		position: absolute;
+		top: 20px;
+		right: 35px;
+		color: #f1f1f1;
+		font-size: 40px;
+		font-weight: bold;
+		transition: 0.3s;
+		cursor: pointer;
+		z-index: 1001;
+	}
+
+	.close:hover,
+	.close:focus {
+		color: #bbb;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	/* Zoom Animation */
+	@keyframes zoom {
+		from {transform:scale(0)}
+		to {transform:scale(1)}
+	}
 </style>
 
 <script>
@@ -163,6 +236,11 @@ const { height = "300px" } = Astro.props;
 		const carousel = wrapper.querySelector('.carousel');
 		const prevBtn = wrapper.querySelector('.prev');
 		const nextBtn = wrapper.querySelector('.next');
+
+		// Lightbox elements
+		const lightbox = wrapper.querySelector('.lightbox');
+		const lightboxImg = wrapper.querySelector('.lightbox-content');
+		const closeBtn = wrapper.querySelector('.close');
 
 		// Safety check: if elements are missing, stop execution
 		if (!carousel || !prevBtn || !nextBtn) return;
@@ -184,6 +262,9 @@ const { height = "300px" } = Astro.props;
 
 			// Iterate over all child elements (slides)
 			Array.from(carousel.children).forEach(item => {
+				// Skip non-visual elements like scripts and styles
+				if (['SCRIPT', 'STYLE', 'TEMPLATE'].includes(item.tagName)) return;
+
 				// Get the bounding rectangle of the current item
 				const itemRect = item.getBoundingClientRect();
 				// Calculate the center X coordinate of the item
@@ -226,27 +307,86 @@ const { height = "300px" } = Astro.props;
 			carousel.scrollBy({ left: distance, behavior: 'smooth' });
 		};
 
+		/**
+		 * Helper Function: openLightbox
+		 * Opens the lightbox with the image from the clicked item.
+		 * @param {Element} item - The carousel item containing the image.
+		 */
+		const openLightbox = (item) => {
+			if (!lightbox || !lightboxImg) return;
+
+			// Find the image inside the clicked item
+			const img = item.querySelector('img');
+			if (img) {
+				// Set the lightbox image source to the clicked image source
+				lightboxImg.src = img.src;
+				// Show the lightbox
+				lightbox.classList.add('active');
+			}
+		};
+
+		/**
+		 * Helper Function: closeLightbox
+		 * Hides the lightbox.
+		 */
+		const closeLightbox = () => {
+			if (lightbox) {
+				lightbox.classList.remove('active');
+			}
+		};
+
 		// --- Event Listener: Click on Carousel Items ---
 		// Add click event listener to the carousel container
 		carousel.addEventListener('click', (e) => {
 			// Check if the click was on a carousel item (or its children)
-			// We look for the closest direct child of the carousel
-			const clickedItem = e.target.closest('.carousel > *');
+			// We look for the closest direct child of the carousel, excluding scripts/styles
+			const clickedItem = e.target.closest('.carousel > *:not(script):not(style):not(template)');
 
 			// If a valid item was clicked and we weren't dragging
 			if (clickedItem && !isDragging) {
-				scrollToItem(clickedItem);
+				// Check if the clicked item is already the centered one
+				const centeredItem = getCenteredItem();
+
+				if (clickedItem !== centeredItem) {
+					// If not centered, scroll to it
+					scrollToItem(clickedItem);
+				} else {
+					// If it IS centered, open it in the lightbox
+					openLightbox(clickedItem);
+				}
 			}
 		});
+
+		// --- Event Listener: Close Lightbox ---
+		if (closeBtn) {
+			closeBtn.addEventListener('click', closeLightbox);
+		}
+
+		// Close lightbox when clicking outside the image (on the background)
+		if (lightbox) {
+			lightbox.addEventListener('click', (e) => {
+				if (e.target === lightbox) {
+					closeLightbox();
+				}
+			});
+		}
 
 		// --- Event Listener: Previous Button ---
 		prevBtn.addEventListener('click', () => {
 			// Find the currently centered item
 			const current = getCenteredItem();
 			// If it exists and has a previous sibling...
-			if (current && current.previousElementSibling) {
-				// Scroll to that previous sibling
-				scrollToItem(current.previousElementSibling);
+			if (current) {
+				let prev = current.previousElementSibling;
+				// Skip non-visual elements
+				while (prev && ['SCRIPT', 'STYLE', 'TEMPLATE'].includes(prev.tagName)) {
+					prev = prev.previousElementSibling;
+				}
+
+				if (prev) {
+					// Scroll to that previous sibling
+					scrollToItem(prev);
+				}
 			}
 		});
 
@@ -255,9 +395,17 @@ const { height = "300px" } = Astro.props;
 			// Find the currently centered item
 			const current = getCenteredItem();
 			// If it exists and has a next sibling...
-			if (current && current.nextElementSibling) {
-				// Scroll to that next sibling
-				scrollToItem(current.nextElementSibling);
+			if (current) {
+				let next = current.nextElementSibling;
+				// Skip non-visual elements
+				while (next && ['SCRIPT', 'STYLE', 'TEMPLATE'].includes(next.tagName)) {
+					next = next.nextElementSibling;
+				}
+
+				if (next) {
+					// Scroll to that next sibling
+					scrollToItem(next);
+				}
 			}
 		});
 
