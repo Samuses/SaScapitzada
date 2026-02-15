@@ -5,7 +5,7 @@ const { src = "", title = null } = Astro.props;
 <div class="audio-container">
     {title && <h4 id="audioTitle">{title}</h4>}
     
-    <audio controls>
+    <audio controls class="audio-player">
         <source src={src} type="audio/mpeg">
     </audio>
 </div>
@@ -40,3 +40,19 @@ const { src = "", title = null } = Astro.props;
         height: 40px;
     }
 </style>
+
+<script>
+    // Seleziona tutti gli elementi audio con la classe .audio-player
+    const audioPlayers = document.querySelectorAll('.audio-player');
+
+    audioPlayers.forEach(player => {
+        player.addEventListener('play', () => {
+            // Quando un player inizia a suonare, metti in pausa tutti gli altri
+            audioPlayers.forEach(otherPlayer => {
+                if (otherPlayer !== player) {
+                    otherPlayer.pause();
+                }
+            });
+        });
+    });
+</script>
