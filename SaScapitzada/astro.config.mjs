@@ -10,7 +10,7 @@ export default defineConfig({
     trailingSlash: "ignore", // assicurati che l'URL del sito usi lo "/" finale 
 
     redirects:{
-        '/':'./SaScapitzada/it/', // reindirizza alla pagina in italiano
+        '/':'/SaScapitzada/it/', // reindirizza alla pagina in italiano
     },
 
     integrations:[
