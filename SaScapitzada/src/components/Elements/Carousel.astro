@@ -227,6 +227,30 @@ const { height = "300px" } = Astro.props;
 		from {transform:scale(0)}
 		to {transform:scale(1)}
 	}
+
+	/* Media query for mobile and tablet devices */
+	@media (max-width: 1024px) {
+		.nav-btn {
+			background: transparent; /* Transparent background on mobile/tablet */
+			backdrop-filter: none; /* Remove blur effect */
+		}
+
+		.nav-btn:hover {
+			background: transparent; /* Keep transparent on hover */
+		}
+
+		/* Constrain item width to viewport width on mobile */
+		.carousel > :global(*:not(script):not(style):not(template)) {
+			max-width: 85vw; /* Reduced to ensure it fits within screen with margins */
+		}
+
+		/* Ensure image fits entirely within the container */
+		.carousel > :global(*) > :global(img) {
+			object-fit: contain;
+			max-width: 100%;
+			height: 100%;
+		}
+	}
 </style>
 
 <script>
