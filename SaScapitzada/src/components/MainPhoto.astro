@@ -3,14 +3,15 @@ import { Image } from "astro:assets";
 import immagineGruppo from "../assets/images/fotoGruppo.jpeg"
 ---
 
-<div class="mainPhoto">
+<div class="MainPhoto">
     <Image src= {immagineGruppo} alt = "Foto del gruppo Sa Scapitzada" />
 </div>
 
 <style>
-    .mainPhoto img {
+    .MainPhoto img {
         width: 100%;
         max-width: 500px; /* AGGIUSTA QUESTO NUMERO PER LA GRANDEZZA */
         height: auto;
+        border: 5px solid aqua;
     }
 </style>

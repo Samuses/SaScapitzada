@@ -4,12 +4,18 @@ import Link from "../../components/Link.astro" // componente importato da....
 import About from "../../components/About.astro"
 import MainPhoto from "../../components/MainPhoto.astro"
 import Carousel from "../../components/Carousel.astro"
+import Projects from "../../components/Projects.astro"
+import FutureProject from "../../components/FutureProject.astro"
 ---
 <Layout title = "SA Scapitzada" language = "it">
 	
-	<About></About>
+	<About/>
+	<Projects/>
+
+	<MainPhoto/>
 	
-	<MainPhoto></MainPhoto>
-	<Carousel></Carousel>
-	
+	<Carousel path=""/>
+
+	<FutureProject/>
+
 </Layout>
