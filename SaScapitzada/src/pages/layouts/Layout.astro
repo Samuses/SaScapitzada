@@ -1,106 +1,147 @@
 ---
-import { string } from 'astro:schema';
 import Footer from '../../components/PageSpecific/Footer.astro';
 import Header from '../../components/PageSpecific/Header.astro';
 
 interface Props {
-	title: string;
-	language: string;
+    title: string;
+    language: string;
 }
 
-const {title, language} = Astro.props; // dichiariamo i parametri che prenderà in layout
+const {title, language} = Astro.props;
 ---
 
 <!doctype html>
 <html lang={language}>
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + "/favicon.svg"} />
-        <link rel="icon" type="image/x-icon" href={import.meta.env.BASE_URL + "/favicon.ico"} />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<!-- Cinzel per i titoli (stile romano/antico), EB Garamond per il testo (eleganza classica) -->
-		<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-	</head>
-	
-	<body>
-		<div class="app-container">
-			<Header></Header>
+    <head>
+       <meta charset="UTF-8" />
+       <meta name="viewport" content="width=device-width" />
 
-			<main>
-				<slot />
-			</main>
+       <link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + "/favicon.svg"} />
+       <link rel="icon" type="image/x-icon" href={import.meta.env.BASE_URL + "/favicon.ico"} />
 
-			<Footer></Footer>
-		</div>
-	</body>
+       <meta name="generator" content={Astro.generator} />
+       <title>{title}</title>
+
+       <link rel="preconnect" href="https://fonts.googleapis.com">
+       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+       <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+       <script is:inline>
+        (function() {
+            function getTheme() {
+                // 1. Cerca preferenza salvata dall'utente
+                if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+                    return localStorage.getItem('theme');
+                }
+                // 2. Altrimenti controlla preferenza di sistema
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                }
+                // 3. Default Light
+                return 'light';
+            }
+
+            const theme = getTheme();
+
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            window.theme = theme;
+        })();
+       </script>
+    </head>
+
+    <body>
+       <div class="app-container">
+          <Header></Header>
+
+          <main>
+             <slot />
+          </main>
+
+          <Footer></Footer>
+       </div>
+    </body>
 </html>
 
 <style is:global>
-	:root {
-		--bg-color: #1a1a1a; /* Nero carbone */
-		--text-color: #f5f5f5; /* Bianco sporco */
-		--accent-color: #d4af37; /* Oro antico */
-		--secondary-bg: #252525;
-		--pattern-color: #333;
-	}
+    /* 1. Definiamo i colori per la modalità CHIARA (Light Mode) */
+    :root {
+       --bg-color: #fdfbf7;      /* Lino / Bianco sporco */
+       --text-color: #2c2c2c;    /* Nero carbone per il testo */
+       --accent-color: #a83f39;  /* Rosso sardo (o tieni l'oro #d4af37 se preferisci) */
+       --secondary-bg: #f4f1ea;  /* Un beige leggermente più scuro per stacchi */
+       --pattern-color: #333;
+    }
 
-	html {
-		font-family: 'EB Garamond', serif;
-		background-color: var(--bg-color);
-		color: var(--text-color);
-		/* Sfondo con texture sottile che ricorda la pietra o il tessuto grezzo */
-		background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23333333' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-	}
+    /* 2. Definiamo i colori per la modalità SCURA (Dark Mode) - I tuoi originali */
+    html.dark {
+       --bg-color: #1a1a1a;      /* Nero carbone originale */
+       --text-color: #f5f5f5;    /* Bianco sporco originale */
+       --accent-color: #d4af37;  /* Oro antico originale */
+       --secondary-bg: #252525;
+       --pattern-color: #333;
+    }
 
-	body {
-		margin: 0;
-		width: 100%;
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-	}
+    html {
+       font-family: 'EB Garamond', serif;
+       background-color: var(--bg-color);
+       color: var(--text-color);
 
-	.app-container {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-		width: 100%;
-		/* Rimuoviamo max-width per permettere all'header di estendersi, lo gestiremo nel main */
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
+       /* Texture di sfondo: siccome è un SVG con opacità bassa, funziona bene su entrambi i colori */
+       background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23333333' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
 
-	main {
-		flex: 1;
-		padding: 2rem 1rem;
-		max-width: 1200px;
-		margin: 0 auto;
-		width: 100%;
-		box-sizing: border-box;
-	}
+    body {
+       margin: 0;
+       width: 100%;
+       min-height: 100vh;
+       display: flex;
+       flex-direction: column;
+       /* Aggiungiamo la transizione per rendere fluido il cambio tema */
+       transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-	h1, h2, h3, h4, h5, h6 {
-		font-family: 'Cinzel', serif; /* Font per i titoli */
-		color: var(--accent-color);
-		margin-top: 0;
-		text-transform: uppercase;
-		letter-spacing: 1px;
-	}
+    .app-container {
+       display: flex;
+       flex-direction: column;
+       min-height: 100vh;
+       width: 100%;
+       margin: 0;
+       padding: 0;
+       box-sizing: border-box;
+    }
 
-	a {
-		color: var(--accent-color);
-		text-decoration: none;
-		transition: all 0.2s;
-		border-bottom: 1px dotted transparent;
-	}
+    main {
+       flex: 1;
+       padding: 2rem 1rem;
+       max-width: 1200px;
+       margin: 0 auto;
+       width: 100%;
+       box-sizing: border-box;
+    }
 
-	a:hover {
-		opacity: 0.8;
-		border-bottom: 1px dotted var(--accent-color);
-	}
+    h1, h2, h3, h4, h5, h6 {
+       font-family: 'Cinzel', serif;
+       color: var(--accent-color);
+       margin-top: 0;
+       text-transform: uppercase;
+       letter-spacing: 1px;
+       transition: color 0.3s ease;
+    }
+
+    a {
+       color: var(--accent-color);
+       text-decoration: none;
+       transition: all 0.2s;
+       border-bottom: 1px dotted transparent;
+    }
+
+    a:hover {
+       opacity: 0.8;
+       border-bottom: 1px dotted var(--accent-color);
+    }
 </style>

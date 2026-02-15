@@ -38,7 +38,7 @@ const opacity = mode === 'dark' ? '0.9' : '0.8';
   class:list={["sardinian-weave", className]}
   role="separator"
   aria-hidden="true"
-  data-mode={mode}
+  mode={mode}
   style={`
     --p-color: ${patternColor};
     --bg-color: ${bgColor};
@@ -108,9 +108,18 @@ const opacity = mode === 'dark' ? '0.9' : '0.8';
   }
 
   /* Aggiustamenti specifici per la modalità 'dark' per far risaltare il disegno */
-  .sardinian-weave[data-mode="dark"] .border-line,
-  .sardinian-weave[data-mode="dark"] .pattern-container {
+  .sardinian-weave[mode="dark"] .border-line,
+  .sardinian-weave[mode="dark"] .pattern-container {
     /* Aumenta leggermente la luminosità su sfondo scuro */
     filter: url(#fabric-texture) brightness(1.2);
+    mix-blend-mode: screen;
+    opacity: 0.9;
+  }
+
+  /* Aggiustamenti specifici per la modalità 'light' */
+  .sardinian-weave[mode="light"] .border-line,
+  .sardinian-weave[mode="light"] .pattern-container {
+    mix-blend-mode: multiply;
+    opacity: 0.8;
   }
 </style>
