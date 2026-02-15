@@ -1,7 +1,9 @@
 ---
 import Carousel from "../Elements/Carousel.astro";
+
+const { height = "300px" } = Astro.props;
 ---
 
-<Carousel>
+<Carousel height={height}>
     <slot/>
 </Carousel>
