@@ -50,6 +50,15 @@ const { height = "300px" } = Astro.props;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     scroll-behavior: smooth;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .carousel.active {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    scroll-behavior: auto;
   }
 
   .carousel::-webkit-scrollbar {
@@ -57,7 +66,7 @@ const { height = "300px" } = Astro.props;
   }
 
   .nav-btn {
-    background: rgba(255, 255, 255, 0.3); /* Sfondo più trasparente */
+    background: rgba(255, 255, 255, 0.5);
     border: none;
     /* Altezza 100% e larghezza maggiore */
     height: 100%;
@@ -71,11 +80,11 @@ const { height = "300px" } = Astro.props;
     top: 0;
     transition: all 0.2s ease;
     backdrop-filter: blur(2px);
-    color: #333;
+    color: #000;
   }
 
   .nav-btn:hover {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.8);
     color: #000;
   }
 
@@ -115,6 +124,7 @@ const { height = "300px" } = Astro.props;
     width: auto;
     object-fit: cover;
     display: block; /* Aggiunto per rimuovere spazi fantasma sotto le immagini */
+    pointer-events: none;
   }
 </style>
 
@@ -137,6 +147,71 @@ const { height = "300px" } = Astro.props;
 
     nextBtn.addEventListener('click', () => {
       carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+    });
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let snapTimeout;
+
+    const snapToNearest = () => {
+      const carouselRect = carousel.getBoundingClientRect();
+      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+      let minDiff = Infinity;
+
+      // Trova l'elemento più vicino al centro
+      Array.from(carousel.children).forEach(item => {
+        const itemRect = item.getBoundingClientRect();
+        const itemCenter = itemRect.left + itemRect.width / 2;
+        const diff = itemCenter - carouselCenter;
+
+        if (Math.abs(diff) < Math.abs(minDiff)) {
+          minDiff = diff;
+        }
+      });
+
+      if (minDiff !== Infinity) {
+        carousel.scrollBy({
+          left: minDiff,
+          behavior: 'smooth'
+        });
+      }
+
+      // Riabilita lo snap CSS dopo l'animazione
+      clearTimeout(snapTimeout);
+      snapTimeout = setTimeout(() => {
+        carousel.classList.remove('active');
+      }, 600);
+    };
+
+    carousel.addEventListener('mousedown', (e) => {
+      isDown = true;
+      clearTimeout(snapTimeout); // Evita che lo snap precedente interferisca
+      carousel.classList.add('active');
+      startX = e.pageX - carousel.offsetLeft;
+      scrollLeft = carousel.scrollLeft;
+      e.preventDefault();
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+      if (!isDown) return;
+      isDown = false;
+      snapToNearest();
+    });
+
+    carousel.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      snapToNearest();
+    });
+
+    carousel.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - carousel.offsetLeft;
+      const walk = (x - startX) * 1; // Scroll 1:1
+      carousel.scrollLeft = scrollLeft - walk;
     });
   });
 </script>
