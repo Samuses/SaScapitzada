@@ -1,20 +1,55 @@
 ---
 
 ---
-<header><h1>SA Scapitzada</h1></header>
+<header>
+    <div class="header-content">
+        <h1>SA Scapitzada</h1>
+    </div>
+    <!-- Decorazione geometrica ispirata ai tappeti sardi -->
+    <div class="sardinian-pattern"></div>
+</header>
 
 <style>
-h1 {
-    /* Il nero ora "comanda" fino al 65%, poi inizia a sfumare verso l'oro */
-    background: radial-gradient(ellipse at center, #1a1c22 60%, #ece103 100%);
-    
-    color: white;
-    text-align: center;
+header {
+    position: sticky; /* Rende l'header appiccicoso */
+    top: 0;
+    z-index: 1000; /* Assicura che stia sopra tutto */
     width: 100%;
-    padding: 25px 0;
-    font-family: 'Arial Black', sans-serif;
+    background-color: #1a1c22; /* Sfondo solido per coprire il contenuto sotto */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.header-content {
+    /* Il nero ora "comanda" fino al 65%, poi inizia a sfumare verso l'oro */
+    background: radial-gradient(ellipse at center, #1a1c22 60%, #b8860b 100%); /* Oro più scuro/antico */
+    padding: 15px 0; /* Ridotto leggermente per sticky header */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    color: #f5f5f5;
+    text-align: center;
+    margin: 0;
+    font-family: 'Cinzel', serif; /* Font classico/romano */
+    font-weight: 700;
     text-transform: uppercase;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    margin: 20px 0;
+    letter-spacing: 2px;
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.sardinian-pattern {
+    height: 8px;
+    width: 100%;
+    background-color: #8b0000; /* Rosso scuro tipico */
+    background-image:
+        linear-gradient(45deg, #d4af37 25%, transparent 25%, transparent 75%, #d4af37 75%, #d4af37),
+        linear-gradient(45deg, #d4af37 25%, transparent 25%, transparent 75%, #d4af37 75%, #d4af37);
+    background-position: 0 0, 10px 10px;
+    background-size: 20px 20px;
+    border-top: 1px solid #d4af37;
+    border-bottom: 1px solid #d4af37;
 }
 </style>

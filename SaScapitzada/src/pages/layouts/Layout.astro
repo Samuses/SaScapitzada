@@ -22,7 +22,8 @@ const {title, language} = Astro.props; // dichiariamo i parametri che prenderà 
 		<title>{title}</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+		<!-- Cinzel per i titoli (stile romano/antico), EB Garamond per il testo (eleganza classica) -->
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 	</head>
 	
 	<body>
@@ -40,16 +41,19 @@ const {title, language} = Astro.props; // dichiariamo i parametri che prenderà 
 
 <style is:global>
 	:root {
-		--bg-color: #121212;
-		--text-color: #e0e0e0;
-		--accent-color: #ece103;
-		--secondary-bg: #1e1e1e;
+		--bg-color: #1a1a1a; /* Nero carbone */
+		--text-color: #f5f5f5; /* Bianco sporco */
+		--accent-color: #d4af37; /* Oro antico */
+		--secondary-bg: #252525;
+		--pattern-color: #333;
 	}
 
 	html {
-		font-family: 'Inter', sans-serif;
+		font-family: 'EB Garamond', serif;
 		background-color: var(--bg-color);
 		color: var(--text-color);
+		/* Sfondo con texture sottile che ricorda la pietra o il tessuto grezzo */
+		background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23333333' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 	}
 
 	body {
@@ -64,30 +68,39 @@ const {title, language} = Astro.props; // dichiariamo i parametri che prenderà 
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
-		max-width: 1200px;
-		margin: 0 auto;
 		width: 100%;
-		padding: 0 1rem;
+		/* Rimuoviamo max-width per permettere all'header di estendersi, lo gestiremo nel main */
+		margin: 0;
+		padding: 0;
 		box-sizing: border-box;
 	}
 
 	main {
 		flex: 1;
-		padding: 2rem 0;
+		padding: 2rem 1rem;
+		max-width: 1200px;
+		margin: 0 auto;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		color: #ffffff;
+		font-family: 'Cinzel', serif; /* Font per i titoli */
+		color: var(--accent-color);
 		margin-top: 0;
+		text-transform: uppercase;
+		letter-spacing: 1px;
 	}
 
 	a {
 		color: var(--accent-color);
 		text-decoration: none;
-		transition: opacity 0.2s;
+		transition: all 0.2s;
+		border-bottom: 1px dotted transparent;
 	}
 
 	a:hover {
 		opacity: 0.8;
+		border-bottom: 1px dotted var(--accent-color);
 	}
 </style>
