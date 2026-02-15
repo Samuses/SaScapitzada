@@ -4,6 +4,8 @@ interface Props {
   bgColor?: string;      /* Colore di sfondo della fascia (es. #f4f1ea per ecru, transparent per fonderlo) */
   height?: string;       /* Altezza totale della fascia */
   mode?: 'light' | 'dark'; /* 'light' per sfondi chiari, 'dark' per sfondi scuri */
+  topSpace?: string;   /* Aggiunge spazio sopra la fascia */
+  bottomSpace?: string; /* Aggiunge spazio sotto la fascia */
   class?: string;
 }
 
@@ -12,6 +14,8 @@ const {
   bgColor = "transparent",
   height = "32px",
   mode = "dark",
+  topSpace = "16px",
+  bottomSpace = "16px",
   class: className
 } = Astro.props;
 
@@ -29,6 +33,7 @@ const opacity = mode === 'dark' ? '0.9' : '0.8';
   </defs>
 </svg>
 
+{topSpace && <div style={`height: ${topSpace};`}></div>}
 <div
   class:list={["sardinian-weave", className]}
   role="separator"
@@ -50,6 +55,7 @@ const opacity = mode === 'dark' ? '0.9' : '0.8';
 
   <div class="border-line bottom"></div>
 </div>
+{bottomSpace && <div style={`height: ${bottomSpace};`}></div>}
 
 <style>
   .sardinian-weave {
