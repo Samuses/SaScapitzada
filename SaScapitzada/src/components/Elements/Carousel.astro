@@ -27,6 +27,7 @@ const { height = "300px" } = Astro.props;
 </div>
 
 <style>
+  /* Wrapper for the entire carousel component including navigation buttons */
   .carousel-wrapper {
     position: relative;
     display: flex;
@@ -35,42 +36,47 @@ const { height = "300px" } = Astro.props;
     overflow: hidden;
   }
 
+  /* Container for the scrollable area */
   .carousel-container {
     width: 100%;
     overflow: hidden;
   }
 
+  /* The scrollable list of items */
   .carousel {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x mandatory; /* Enables CSS scroll snapping */
     gap: 1rem;
-    /* Aumentato padding-bottom per evitare il taglio dell'ombra */
+    /* Large horizontal padding centers the first and last items */
+    /* Increased padding-bottom prevents shadow clipping */
     padding: 1rem 30vw 2rem 30vw;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Hide scrollbar on Firefox */
     scroll-behavior: smooth;
-    cursor: grab;
-    user-select: none;
+    cursor: grab; /* Indicates draggable content */
+    user-select: none; /* Prevents text/image selection during drag */
     -webkit-user-select: none;
   }
 
+  /* Active state during dragging */
   .carousel.active {
     cursor: grabbing;
-    scroll-snap-type: none;
-    scroll-behavior: auto;
+    scroll-snap-type: none; /* Disable snap while dragging for free movement */
+    scroll-behavior: auto; /* Disable smooth scroll for instant response */
   }
 
+  /* Hide scrollbar on WebKit browsers (Chrome, Safari) */
   .carousel::-webkit-scrollbar {
     display: none;
   }
 
+  /* Navigation buttons (Previous/Next) */
   .nav-btn {
     background: rgba(255, 255, 255, 0.5);
     border: none;
-    /* Altezza 100% e larghezza maggiore */
     height: 100%;
-    width: 80px;
+    width: 80px; /* Wide hit area for easier clicking */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,39 +102,41 @@ const { height = "300px" } = Astro.props;
     right: 0;
   }
 
-  /* Applica lo stile agli elementi passati nello slot */
+  /* Styles for children elements passed into the slot */
   .carousel > :global(*) {
     height: var(--carousel-height);
-    flex: 0 0 auto;
-    scroll-snap-align: center;
+    flex: 0 0 auto; /* Prevent items from shrinking */
+    scroll-snap-align: center; /* Snap items to the center */
     border-radius: 0.5rem;
     overflow: hidden;
-    position: relative; /* Aggiunto per ancorare il bordo ::after */
+    position: relative; /* Anchor for the ::after border */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: transform 0.3s ease;
   }
 
-  /* NUOVO: Disegna il bordo sopra l'immagine */
+  /* Overlay border for better definition against light backgrounds */
   .carousel > :global(*)::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    pointer-events: none;
+    pointer-events: none; /* Allow clicks to pass through */
     z-index: 10;
   }
 
+  /* Image styles within carousel items */
   .carousel > :global(*) > :global(img) {
     height: 100%;
     width: auto;
     object-fit: cover;
-    display: block; /* Aggiunto per rimuovere spazi fantasma sotto le immagini */
-    pointer-events: none;
+    display: block; /* Removes bottom ghost space */
+    pointer-events: none; /* Prevents image dragging behavior */
   }
 </style>
 
 <script>
+  // Initialize all carousels on the page
   document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
     const carousel = wrapper.querySelector('.carousel');
     const prevBtn = wrapper.querySelector('.prev');
@@ -136,11 +144,14 @@ const { height = "300px" } = Astro.props;
 
     if (!carousel || !prevBtn || !nextBtn) return;
 
+    // Calculate scroll distance based on the first item's width
     const getScrollAmount = () => {
       const firstItem = carousel.firstElementChild;
+      // Width + gap (16px approx 1rem)
       return firstItem ? firstItem.clientWidth + 16 : 300;
     };
 
+    // Button Event Listeners
     prevBtn.addEventListener('click', () => {
       carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
     });
@@ -149,18 +160,20 @@ const { height = "300px" } = Astro.props;
       carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
     });
 
+    // Drag to Scroll Logic
     let isDown = false;
     let startX;
     let scrollLeft;
     let snapTimeout;
 
+    // Snaps the carousel to the nearest centered item
     const snapToNearest = () => {
       const carouselRect = carousel.getBoundingClientRect();
       const carouselCenter = carouselRect.left + carouselRect.width / 2;
 
       let minDiff = Infinity;
 
-      // Trova l'elemento più vicino al centro
+      // Iterate through children to find the one closest to the center
       Array.from(carousel.children).forEach(item => {
         const itemRect = item.getBoundingClientRect();
         const itemCenter = itemRect.left + itemRect.width / 2;
@@ -171,6 +184,7 @@ const { height = "300px" } = Astro.props;
         }
       });
 
+      // Scroll to center the closest item
       if (minDiff !== Infinity) {
         carousel.scrollBy({
           left: minDiff,
@@ -178,39 +192,43 @@ const { height = "300px" } = Astro.props;
         });
       }
 
-      // Riabilita lo snap CSS dopo l'animazione
+      // Re-enable CSS scroll snapping after the smooth scroll animation finishes
       clearTimeout(snapTimeout);
       snapTimeout = setTimeout(() => {
         carousel.classList.remove('active');
       }, 600);
     };
 
+    // Mouse Down: Start dragging
     carousel.addEventListener('mousedown', (e) => {
       isDown = true;
-      clearTimeout(snapTimeout); // Evita che lo snap precedente interferisca
-      carousel.classList.add('active');
+      clearTimeout(snapTimeout); // Cancel any pending snap reset
+      carousel.classList.add('active'); // Disable snap, enable grabbing cursor
       startX = e.pageX - carousel.offsetLeft;
       scrollLeft = carousel.scrollLeft;
-      e.preventDefault();
+      e.preventDefault(); // Prevent text selection or default drag
     });
 
+    // Mouse Leave: Stop dragging and snap
     carousel.addEventListener('mouseleave', () => {
       if (!isDown) return;
       isDown = false;
       snapToNearest();
     });
 
+    // Mouse Up: Stop dragging and snap
     carousel.addEventListener('mouseup', () => {
       if (!isDown) return;
       isDown = false;
       snapToNearest();
     });
 
+    // Mouse Move: Perform the scroll
     carousel.addEventListener('mousemove', (e) => {
       if (!isDown) return;
       e.preventDefault();
       const x = e.pageX - carousel.offsetLeft;
-      const walk = (x - startX) * 1; // Scroll 1:1
+      const walk = (x - startX) * 1; // 1:1 scroll ratio
       carousel.scrollLeft = scrollLeft - walk;
     });
   });
