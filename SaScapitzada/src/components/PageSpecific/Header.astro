@@ -11,6 +11,7 @@ import Shr from '../Elements/Atomic/Separator.astro';
 
 <style>
 header {
+    background-image: url(/src/assets/images/sumarmuri-320x200.jpg);
     position: sticky; /* Rende l'header appiccicoso */
     top: 0;
     z-index: 1000; /* Assicura che stia sopra tutto */
@@ -20,22 +21,37 @@ header {
 }
 
 .header-content {
-    padding: 15px 0; /* Ridotto leggermente per sticky header */
+    padding: 20px 0; 
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Crea una fascia centrale che scurisce leggermente solo dove serve */
+    background: linear-gradient(
+        to right, 
+        transparent, 
+        rgba(26, 28, 34, 0.7) 20%, 
+        rgba(26, 28, 34, 0.7) 80%, 
+        transparent
+    );
 }
 
 h1 {
-    color: #f5f5f5;
+    color: #ffffff;
     text-align: center;
     margin: 0;
-    font-family: 'Cinzel', serif; /* Font classico/romano */
+    font-family: 'Cinzel', serif;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 2rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 3px; /* Aumentato un filo per eleganza */
+    font-size: 2.2rem;
+    
+    /* Questo crea un contrasto netto intorno ad ogni singola lettera */
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000,
+         2px 2px 10px rgba(0,0,0,1);
 }
 
 .sardinian-pattern {
